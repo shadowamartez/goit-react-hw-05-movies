@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Suspense, useState, useEffect } from "react";
+import { Link, Outlet, useParams } from "react-router-dom";
 
 function Movies() {
   const { query } = useParams();
   const [searchQuery, setSearchQuery] = useState(query || "");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(false); 
+  const [searched, setSearched] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ function Movies() {
       return;
     }
 
-    const apiKey = "5e607c34877dd240126fa4e4b2f45b71"; 
+    const apiKey = "5e607c34877dd240126fa4e4b2f45b71";
     setLoading(true);
 
     try {
@@ -34,14 +34,13 @@ function Movies() {
       console.error("Error fetching movies:", error);
     } finally {
       setLoading(false);
-      setSearched(true); 
+      setSearched(true);
     }
   };
 
   useEffect(() => {
     if (query) {
       setSearchQuery(query);
-      handleSearch();
     }
   }, [query]);
 
@@ -72,8 +71,12 @@ function Movies() {
       ) : searched && searchQuery.trim() !== "" ? (
         <p>No movies found.</p>
       ) : null}
+      <Suspense fallback={<div>Loading subpage...</div>}>
+        <Outlet />
+      </Suspense>
     </div>
   );
 }
 
 export default Movies;
+
