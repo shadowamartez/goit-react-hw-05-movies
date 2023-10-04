@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy } from "react";
-import { useParams, Link, Route, Routes, useLocation } from "react-router-dom";
+import { useParams, Link, Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { MovieImg, MovieDetailsContainer, MovieInfo } from "./MovieDetails.styled";
 
 const Cast = lazy(() => import("./Cast"));
@@ -9,8 +9,8 @@ const MovieDetails = () => {
     const { movieId } = useParams();
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     const location = useLocation();
-    const previousPath = location.state?.from || "/";
 
     useEffect(() => {
         const apiKey = "5e607c34877dd240126fa4e4b2f45b71";
@@ -46,38 +46,40 @@ const MovieDetails = () => {
 
     return (
         <div>
-            <div>
-                <Link to={previousPath}>Go back</Link>
-            </div>
-            <MovieDetailsContainer>
-                <MovieImg src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt="{movie.title" />
-                <MovieInfo>
-                    <h2>{movie.title}</h2>
-                    <h3>Overview</h3>
-                    <p>{movie.overview}</p>
-                    <h3>Release Date: </h3>
-                    <p>{movie.release_date}</p>
-                    <h3>Runtime: </h3>
-                    <p>{movie.runtime} minutes</p>
-                    <h3>Genres: </h3>
-                    <p>{movie.genres.map((genre) => genre.name).join(", ")}</p>
-                </MovieInfo>
-            </MovieDetailsContainer>
+        <div>
+            <button onClick={() => navigate(location?.state?.from ?? '/')}>Go back</button>
+        </div>
+        <MovieDetailsContainer>
+            <MovieImg
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={movie.title}
+            />
+            <MovieInfo>
+            <h2>{movie.title}</h2>
+            <h3>Overview</h3>
+            <p>{movie.overview}</p>
+            <h3>Release Date: </h3>
+            <p>{movie.release_date}</p>
+            <h3>Runtime: </h3>
+            <p>{movie.runtime} minutes</p>
+            <h3>Genres: </h3>
+            <p>{movie.genres.map((genre) => genre.name).join(", ")}</p>
+            </MovieInfo>
+        </MovieDetailsContainer>
 
-            <ul>
-                <li>
-                <Link to={`/movies/${movieId}/cast`}>Cast</Link>
-                </li>
-                <li>
-                <Link to={`/movies/${movieId}/reviews`}>Reviews</Link>
-                </li>
-            </ul>
+        <ul>
+            <li>
+            <Link to={`/movies/${movieId}/cast`}>Cast</Link>
+            </li>
+            <li>
+            <Link to={`/movies/${movieId}/reviews`}>Reviews</Link>
+            </li>
+        </ul>
 
-            <Routes>
-                <Route path="cast" element={<Cast movieId={movieId} />} />
-                <Route path="reviews" element={<Reviews movieId={movieId} />} />
-            </Routes>
+        <Routes>
+            <Route path="cast" element={<Cast movieId={movieId} />} />
+            <Route path="reviews" element={<Reviews movieId={movieId} />} />
+        </Routes>
         </div>
     );
 };
