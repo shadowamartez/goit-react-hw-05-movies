@@ -1,12 +1,13 @@
-import React, { useState, useEffect, Suspense } from "react";
-import { Link, Outlet } from "react-router-dom";
+import React, { useState, useEffect, Suspense } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const Home = () => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const location = useLocation();
 
     useEffect(() => {
-        const apiKey = "5e607c34877dd240126fa4e4b2f45b71"; 
+        const apiKey = '5e607c34877dd240126fa4e4b2f45b71';
         const fetchTrendingMovies = async () => {
         try {
             const response = await fetch(
@@ -14,13 +15,13 @@ const Home = () => {
             );
 
             if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error('Network response was not ok');
             }
 
             const data = await response.json();
             setMovies(data.results);
         } catch (error) {
-            console.error("Error fetching trending movies:", error);
+            console.error('Error fetching trending movies:', error);
         } finally {
             setLoading(false);
         }
@@ -36,9 +37,11 @@ const Home = () => {
             <div>Loading movies...</div>
         ) : (
             <ul>
-            {movies.map((movie) => (
+            {movies.map(movie => (
                 <li key={movie.id}>
-                <Link to={`/movies/${movie.id}`}>{movie.title}</Link>
+                <Link to={`/movies/${movie.id}`} state={{ from: location }}>
+                    {movie.title}
+                </Link>
                 </li>
             ))}
             </ul>
